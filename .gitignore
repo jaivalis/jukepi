@@ -97,4 +97,5 @@ pip-delete-this-directory.txt
 .scrapy
 *.spec
 *.pot
+*.db
 .webassets-cache
