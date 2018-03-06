@@ -43,8 +43,8 @@ from ..io.libraryhandler import filtered_crawler, get_artwork
 # # </editor-fold>
 
 # app = Flask(__name__)
-# # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/jaivalis/workspace/PycharmProjects/PyJukePi/library.db'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/jaivalis/workspace/PycharmProjects/PyJukePi/library.db'
+# # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/jaivalis/workspace/PycharmProjects/JukePi/library.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/jaivalis/workspace/PycharmProjects/JukePi/library.db'
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_ECHO'] = True
 # db = SQLAlchemy(app)
@@ -77,7 +77,11 @@ def persist_library(session_, rebuild):
             session_.add(existing_artist)
             session_.flush()
 
-        existing_album = get_album(session_, metadata.album, existing_artist.id)
+        existing_album = None
+        for album in existing_artist.albums:
+            if album.title == metadata.album:
+                existing_album = album
+                break
         if not existing_album:
             
             existing_album = Album(title=metadata.album,
@@ -148,8 +152,8 @@ def get_artist(session_, name, case_sensitive=False):
     return session_.query(Artist).filter_by(name=name).first()
 
 
-def get_album(session_, title, artist_id):
-    return session_.query(Album).filter_by(title=title, artist_id=artist_id).first()
+def get_album(session_, album_id):
+    return session_.query(Album).filter_by(id=album_id).first()
 
 
 def get_artwork(session_, uri):
