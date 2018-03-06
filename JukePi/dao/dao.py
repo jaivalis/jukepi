@@ -83,11 +83,11 @@ def persist_library(session_, rebuild):
                 existing_album = album
                 break
         if not existing_album:
-            
             existing_album = Album(title=metadata.album,
                                    year=metadata.year,
                                    artist_id=existing_artist.id,
                                    artist=existing_artist)
+            existing_artist.albums.append(existing_album)
             session_.add(existing_album)
             session_.flush()
             
