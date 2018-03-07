@@ -9,6 +9,8 @@ class Artist(db.Model):
     name = db.Column(db.String(255), index=True)
 
     albums = db.relationship('Album', back_populates='artist')
+    
+    lastfm_url = db.Column(db.String(255))
     # TODO pic_uri = db.Column(db.String(255), index=True, unique=True)
 
 
@@ -28,6 +30,8 @@ class Album(db.Model):
     
     cover_art_id = db.Column(db.Integer)
     cover_art = db.relationship('CoverArt', uselist=False)
+
+    lastfm_url = db.Column(db.String(255))
     
     def duration_str(self):
         duration = 0
