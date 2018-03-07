@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from PyJukePi.dao import db
+from JukePi.dao import db
 
 
 class Artist(db.Model):
@@ -28,6 +28,21 @@ class Album(db.Model):
     
     cover_art_id = db.Column(db.Integer)
     cover_art = db.relationship('CoverArt', uselist=False)
+    
+    def duration_str(self):
+        duration = 0
+        for track in self.tracks:
+            duration += track.duration
+        return str(timedelta(seconds=duration))
+    
+    def genre_str(self):
+        genres = set()
+        for track in self.tracks:
+            genres.add(track.genre)
+        return ','.join(genres)
+    
+    def __str__(self):
+        return self.title + ' by ' + self.artist.name
 
 
 class Track(db.Model):
