@@ -1,0 +1,4 @@
+flask
+hsaudiotag
+sqlalchemy
+markupsafe
