@@ -9,5 +9,5 @@ app = Flask(__name__)
 
 from JukePi.dao import DB
 
-database = DB()
-database.create_all()
+# database = DB()
+# database.create_all()

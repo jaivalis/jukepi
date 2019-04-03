@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row imagetiles">
+        {% for artist in artists %}
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <img src=https://placehold.it/128x128 class="img-responsive">
+            <p>
+                <a href="/artist/{{ artist.name | urlencode }}"> {{ artist.name }}</a>
+                <br>
+                {{ artist.albums | length }} albums
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

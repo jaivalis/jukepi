@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row imagetiles">
+        {% for album in albums %}
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 text-center">
+            <img src=https://placehold.it/128x128 class="img-responsive">
+            <p>
+                <a href="/album/{{ album.artist.name | urlencode }}/{{ album.title | urlencode }}"> {{ album.title }}</a>
+                <br>
+                <a href="/artist/{{ album.artist.name | urlencode }}"> {{ album.artist.name }}</a>
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

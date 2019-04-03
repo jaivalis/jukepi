@@ -7,8 +7,13 @@ class Artist(db.Model):
     __tablename__ = 'artist'
     id = db.Column(db.Integer, primary_key=True, index=True)
     name = db.Column(db.String(255), index=True)
-
-    albums = db.relationship('Album', back_populates='artist')
+    
+    added_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    played_at = db.Column(db.DateTime)
+    
+    plays = db.Column(db.Integer)  # TODO turn to float ?
+    
+    albums = db.relationship('Album', lazy='subquery', back_populates='artist')
     
     lastfm_url = db.Column(db.String(255))
     # TODO pic_uri = db.Column(db.String(255), index=True, unique=True)
@@ -21,9 +26,9 @@ class Album(db.Model):
     year = db.Column(db.Integer)
 
     artist_id = db.Column(db.String(255), db.ForeignKey(Artist.id))
-    artist = db.relationship(Artist, uselist=False)
+    artist = db.relationship('Artist', lazy='subquery', back_populates='albums', uselist=False)
 
-    tracks = db.relationship('Track', back_populates='album')
+    tracks = db.relationship('Track', lazy='subquery', back_populates='album')
     
     added_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
     played_at = db.Column(db.DateTime)
@@ -33,19 +38,23 @@ class Album(db.Model):
 
     lastfm_url = db.Column(db.String(255))
     
-    def duration_str(self):
+    def get_album_tracks(self) -> list:
+        """ Returns the album tracks sorted by track_num """
+        return sorted(self.tracks, key=lambda x: x.track_num, reverse=False)
+    
+    def duration_str(self) -> str:
         duration = 0
         for track in self.tracks:
             duration += track.duration
         return str(timedelta(seconds=duration))
     
-    def genre_str(self):
+    def genre_str(self) -> str:
         genres = set()
         for track in self.tracks:
             genres.add(track.genre)
         return ','.join(genres)
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title + ' by ' + self.artist.name
 
 
@@ -65,13 +74,17 @@ class Track(db.Model):
 
     last_modified = db.Column(db.DateTime)
 
-    artist_id = db.Column(db.String(255), db.ForeignKey(Artist.id))
-    artist = db.relationship(Artist, uselist=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey(Artist.id))
+    artist = db.relationship('Artist', lazy='subquery', uselist=False)
 
     album_id = db.Column(db.Integer, db.ForeignKey(Album.id))
-    album = db.relationship(Album, uselist=False)
+    album = db.relationship('Album', lazy='subquery', uselist=False)
 
-    def __repr__(self):
+    def duration_str(self) -> str:
+        time = datetime(1, 1, 1) + timedelta(seconds=self.duration)
+        return format(time.minute, "02d") + ":" + format(time.second, "02d")
+    
+    def __repr__(self) -> str:
         return str(self.__dict__)
     
     def __cmp__(self, other):

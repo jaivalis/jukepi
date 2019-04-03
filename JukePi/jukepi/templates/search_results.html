@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% if artists %}
+    <h1>Artists</h1>
+    {% for artist in artists %}
+    <div><p><img src="{{ artist.artwork | default('static/img/default-album.png') }}" alt={{ artist.title }} width="120" height="120"/>
+        {{ artist.title }} <a href="/artist/{{ artist.name | urlencode }}">{{ artist.name }}</a></p></div>
+    {% endfor %}
+    {% endif %}
+
+    {% if albums %}
+    <h1>Albums</h1>
+    {% for album in albums %}
+    <div><p><img src="{{ album.artwork | default('static/img/default-album.png') }}" alt={{ album.title }} width="120" height="120"/>
+        {{ album.title }} Released: <b>{{ album.year }}</b></p></div>
+    {% endfor %}
+    {% endif %}
+
+    {% if tracks %}
+    <h1>Tracks</h1>
+
+    <table class="table" data-type="album">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Duration</th>
+            <th scope="col">Plays</th>
+            <th scope="col"><i class="fa fa-thumbs-up"></i></th>
+            <th scope="col">Bitrate</th>
+            <th scope="col"></th>
+        </tr>
+
+        {% for track in tracks %}
+        <tr>
+            <th scope="row">{{ track.track_num }}</th>
+            <td>{{ track.title }}</td>
+            <td>{{ track.duration_str() }}</td>
+            <td>{{ track.plays }}</td>
+            <td>{{ track.rating }}</td>
+            <td>{{ track.bit_rate }} <span class="glyphicon glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></td>
+            <td>
+                <button class="media-player btn btn-primary btn-lg raised" value="playAlbumFromTrack/{{ None }}/{{ track.id }}">
+                    <i class="fa fa-play" style="font-size:8px;"></i>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+{% endblock %}

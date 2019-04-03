@@ -1,0 +1,37 @@
+
+<body>
+{% block content %}
+
+{% if playlist %}
+<table class="table" data-type="album">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Duration</th>
+        <th scope="col">Plays</th>
+        <th scope="col"><i class="fa fa-thumbs-up"></i></th>
+        <th scope="col"></th>
+    </tr>
+    {% for track in playlist %}
+        <tr>
+            <th scope="row">{{ track.track_num }}</th>
+            <td>{{ track.title }}</td>
+            <td>{{ track.duration_str() }}</td>
+            <td>{{ track.plays }}</td>
+            <td>{{ track.rating }}</td>
+            <td>
+                <button class="media-player btn btn-primary btn-lg raised" value="playAlbumFromTrack/{{ track.album.id }}/{{ track.id }}">
+                    <i class="fa fa-play" style="font-size:8px;"></i>
+                </button>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% else %}
+
+<center>Nothing playing</center>
+
+{% endif %}
+
+{% endblock %}
+</body>

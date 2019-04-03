@@ -1,5 +1,9 @@
+import logging
 import re
 import subprocess
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_volume():
@@ -7,17 +11,16 @@ def get_volume():
     output = proc.stdout.read()
     
     m = re.search(r"\[([0-9]+)(%)\]", str(output))
+    assert 0 <= int(m.group(1)) <= 100
     return int(m.group(1))
     
 
-def set_volume(val):
+def set_volume(val: int):
     subprocess.call(["amixer", "-D", "pulse", "sset", "Master", str(val) + '%'])
 
 
-def modify_volume(delta):
+def modify_volume(delta: int):
     assert isinstance(delta, int)
-    if delta > 0:
-        pass
     delta_str = str(delta) + '%+' if delta > 0 else str(delta) + '%-'
     subprocess.call(["amixer", "-D", "pulse", "sset", "Master", delta_str])
 
@@ -27,4 +30,4 @@ def mute():
 
 
 if __name__ == '__main__':
-    print (get_volume())
+    logger.info('Current volume: %s', get_volume())

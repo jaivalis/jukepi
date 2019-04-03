@@ -1,21 +1,27 @@
+import logging
 import os
 import pathlib
 from os.path import isfile, join
 
+from JukePi.configuration import CONFIG
+
+
+logger = logging.getLogger(__name__)
+
+
 SUPPORTED_FORMATS = ['.flac', '.mp3', '.m4a', '.ogg']
 IMG_FORMATS = ['.jpg', '.jpeg', '.png']
-# SUPPORTED_FORMATS = ['.mp3']
 FILE_COUNT = 0
 
-path_short = '/home/jaivalis/Downloads/Soulseek Downloads/complete/'
 path_long = '/home/jaivalis/Music/Sorted/'
 
 
-def type_filter(path, types):
+def type_filter(path: str, types):
     return pathlib.Path(path).suffix.lower() in types
 
 
-def filtered_crawler(path=path_short, suffix_filter=SUPPORTED_FORMATS):
+def filtered_crawler(path: str, suffix_filter: list=SUPPORTED_FORMATS):
+    logger.info('Scanning folder \'%s\' for files of type(s) \'%s\'', path, suffix_filter)
     global FILE_COUNT
 
     for (path, dirs, files) in os.walk(path):
@@ -30,20 +36,17 @@ def filtered_crawler(path=path_short, suffix_filter=SUPPORTED_FORMATS):
             yield full_path, os.path.getmtime(full_path)
 
 
-def get_artwork(path):
+def get_artwork(path: str) -> str:
     img_files = [f for f in os.listdir(path) if isfile(join(path, f)) and type_filter(f, IMG_FORMATS)]
-    
-    print(img_files)
+
+    logger.info(img_files)
     for img in img_files:
-        if 'front' in img.lower():
+        if 'front' in img.lower() or 'folder' in img.lower() or 'cover' in img.lower():
             return os.path.join(path, img)
-        elif 'folder' in img.lower():
-            return os.path.join(path, img)
-        elif 'cover' in img.lower():
-            return os.path.join(path, img)
-    return None
+    return ''
 
 
 if __name__ == '__main__':
-    filtered_crawler()
-    print('Found {} files.'.format(FILE_COUNT))
+    for f in filtered_crawler(CONFIG['Paths']['library_dir']):
+        logger.debug(f)
+    logger.info('Found %s files.', FILE_COUNT)

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div class="media">
+    <img class="d-flex mr-3" src="{{ artist.picture | default('https://placehold.it/128x128') }}" alt="Generic placeholder image">
+    <div class="media-body">
+        <h2 class="mt-0">{{ artist.name }} <a href="{{ artist.lastfm_url if artist.lastfm_url is not none else 'https://www.last.fm/music/' + artist.name }}" target="_blank">
+            <i class="fa fa-lastfm-square"></i></a>
+        </h2>
+        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+    </div>
+</div>
+
+
+<h1>Discography</h1>
+{% for album in albums %}
+<table>
+  <tbody>
+    <tr>
+      <th scope="row" rowspan="2"><img src="{{ album.artwork | default(url_for('static', filename='img/default-album.png')) }}" alt={{ album.title }} width="120" height="120"/></th>
+      <td><a href="/album/{{ album.artist.name | urlencode }}/{{ album.title | urlencode }}">{{ album.title }}</a> Year: <b>{{ album.year }}</b></td>
+    </tr>
+    <tr>
+      <td><a href="/artist/{{ album.artist.name | urlencode }}"> {{ album.artist.name }}</a></td>
+    </tr>
+  </tbody>
+</table>
+{% endfor %}
+
+{% endblock %}

@@ -8,6 +8,12 @@ from JukePi.io.playback.mediaplayer import MediaPlayer
 logger = logging.getLogger(__name__)
 
 
+def song_finished(event):
+    logger.info(event)
+    VlcMediaPlayer.instance.current_index += 1
+    logger.debug('Song finished')
+
+
 class VlcMediaPlayer(MediaPlayer):
     """
     Singleton
@@ -77,13 +83,7 @@ class VlcMediaPlayer(MediaPlayer):
     def get_now_playing_id(self):
         if not VlcMediaPlayer.instance.playlist:
             return None
-        return VlcMediaPlayer.instance.playlist.get_song(VlcMediaPlayer.instance.current_index).id
+        return VlcMediaPlayer.instance.playlist.get_song(VlcMediaPlayer.instance.current_index - 1).id
     
     def get_queue(self):
         return VlcMediaPlayer.instance.playlist
-
-
-def song_finished(event):
-    logger.info(event)
-    VlcMediaPlayer.instance.current_index += 1
-    logger.debug('Song finished')

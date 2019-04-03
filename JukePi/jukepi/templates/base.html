@@ -1,0 +1,139 @@
+<html>
+
+<head>
+    {% if title %}
+    <title>{{ title }} - JukePi</title>
+    {% else %}
+    <title>Welcome to JukePi</title>
+    {% endif %}
+
+    <!--BootstrapCDN-->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+    <!--<script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.2.6.min.js') }}"></script>-->
+    <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/base.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="shortcut icon" type="image/ico" href="{{ url_for('static', filename='/img/favicon.ico') }}"/>
+</head>
+
+
+<body>
+    <!-- Fixed navbar top -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="/">JukePi <i class="fa fa-headphones"></i></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdownRecents" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Recent
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">Added</a>
+                        <a class="dropdown-item" href="#">Played</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdownAlbums" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Albums
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="/AlbumsAlpha">Alphabetically</a>
+                        <a class="dropdown-item" href="/AlbumsRecentlyAdded">Recently Added</a>
+                        <a class="dropdown-item" href="/AlbumsRecentlyPlayed">Recently Played</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdownArtists" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Artists
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="/ArtistsAlpha">Alphabetically</a>
+                        <a class="dropdown-item" href="/ArtistsRecentlyAdded">Recently Added</a>
+                        <a class="dropdown-item" href="/ArtistsRecentlyPlayed">Recently Played</a>
+                    </div>
+                </li>
+            </ul>
+            <form id="searchForm" class="mx-2 my-auto d-inline mt-2 mt-md-0">
+                <div class="input-group">
+                    <input id="searchField" type="text" class="form-control" placeholder="Search" aria-label="Search">
+                    <span class="input-group-append">
+                        <button id="searchButton" class="btn btn-outline-secondary" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </nav>
+
+    <div id = "alert_placeholder" class="alert alert-fixed"></div>
+
+    <!-- Fixed navbar bottom -->
+    <main role="main" class="container">
+    {% block content %}{% endblock %}
+    </main>
+
+    <!-- Begin page content -->
+    <nav class="navbar fixed-bottom navbar-light bg-dark">
+
+        <!-- Now playing -->
+        <div id="currentlyPlaying" class="navbar-brand media now-playing">
+            {% if now_playing %}
+            <img class="d-flex mr-3" src="https://placehold.it/64x64" alt="Now Playing">
+            <div class="media-body">
+                <small>
+                    {{ now_playing.title }} -
+                    <a href="/artist/{{ now_playing.artist.name | urlencode }}">{{ now_playing.artist.name }}</a>
+                    <br>
+                    <a href="/album/{{ now_playing.album.artist.name | urlencode }}/{{ now_playing.album.title | urlencode }}"> {{ now_playing.album.title }}</a>
+                </small>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Player controls -->
+        <div id="playerControl" class="navbar-brand mx-auto">
+            <button class="media-player btn btn-primary btn-lg raised" value="prev">
+                <i class="fa fa-fast-backward"></i>
+            </button>
+            <button id="playButton" class="media-player btn btn-primary btn-lg raised" value="pause">
+                <i class="fa {{ 'fa-pause' if now_playing != None else 'fa-play' }}"></i>
+            </button>
+            <button class="media-player btn btn-primary btn-lg raised" value="next">
+                <i class="fa fa-fast-forward"></i>
+            </button>
+            <button class="media-player btn btn-primary btn-lg raised" value="queue" data-container="body" data-toggle="popover" data-placement="top" data-content="/queue">
+                <i class="fa fa-list"></i>
+            </button>
+        </div>
+
+        <!-- Volume controls -->
+        <div id="volumeControl" class="mt-2 mt-md-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <input type="range" min="1" max="100" value="{{ volume }}" class="slider" id="volumeSlider">
+                    </div>
+                    <div class="col-xs-6">
+                        <i class="fa fa-volume-up" id="volumeIcon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+</body>
+</html>

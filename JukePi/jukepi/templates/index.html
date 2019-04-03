@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Recently Added</h1>
+    {% for album in recently_added_albums %}
+    <table>
+      <tbody>
+        <tr>
+          <th scope="row" rowspan="2"><img src="{{ album.artwork | default(url_for('static', filename='img/default-album.png')) }}" alt={{ album.title }} width="120" height="120"/></th>
+          <td><a href="/album/{{ album.artist.name | urlencode }}/{{ album.title | urlencode }}">{{ album.title }}</a> Year: <b>{{ album.year }}</b></td>
+        </tr>
+        <tr>
+          <td><a href="/artist/{{ album.artist.name | urlencode }}"> {{ album.artist.name }}</a></td>
+        </tr>
+      </tbody>
+    </table>
+    {% endfor %}
+
+    <h1>Recently Played</h1>
+    {% for album in recently_played_albums %}
+    <table>
+      <tbody>
+        <tr>
+          <th scope="row" rowspan="2"><img src="{{ album.artwork | default(url_for('static', filename='img/default-album.png')) }}" alt={{ album.title }} width="120" height="120"/></th>
+          <td><a href="/album/{{ album.artist.name | urlencode }}/{{ album.title | urlencode }}">{{ album.title }}</a> Year: <b>{{ album.year }}</b></td>
+        </tr>
+        <tr>
+          <td><a href="/artist/{{ album.artist.name | urlencode }}"> {{ album.artist.name }}</a></td>
+        </tr>
+      </tbody>
+    </table>
+    {% endfor %}
+{% endblock %}
