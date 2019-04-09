@@ -8,14 +8,14 @@ from markupsafe import Markup
 from werkzeug.exceptions import abort
 from werkzeug.local import LocalProxy
 
-import JukePi.dao.dao as dao
-import JukePi.io.volumecontrol as vol
-from JukePi import app
-from JukePi.configuration import CONFIG
-from JukePi.dao import db
-from JukePi.exceptions import EntityNotFoundException
-from JukePi.io.playback.vlcmediaplayer import VlcMediaPlayer
-from JukePi.io.playlist import Playlist
+from src import jukepi as dao
+import iox.volumecontrol as vol
+from jukepi import app
+from jukepi import CONFIG
+from jukepi import db
+from exceptions import EntityNotFoundException
+from jukepi import VlcMediaPlayer
+from jukepi import Playlist
 
 
 def render_include_context(template_name_or_list, **context):

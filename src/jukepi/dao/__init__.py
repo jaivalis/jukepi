@@ -3,7 +3,7 @@ import logging
 
 from flask_sqlalchemy import SQLAlchemy
 
-from JukePi import app
+from jukepi import app
 
 
 logger = logging.getLogger(__name__)
@@ -14,8 +14,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 db_session = db.session
-
-from JukePi.dao.models import Artist, Album, Track, CoverArt
 
 
 class DB:

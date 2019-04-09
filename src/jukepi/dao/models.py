@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from JukePi.dao import db
+from jukepi.dao import db
 
 
 class Artist(db.Model):

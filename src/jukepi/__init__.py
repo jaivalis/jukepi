@@ -7,7 +7,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_format)
 
 app = Flask(__name__)
 
-from JukePi.dao import DB
+from jukepi.dao import DB
 
 # database = DB()
 # database.create_all()

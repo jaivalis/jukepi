@@ -2,7 +2,7 @@ import abc
 
 import logging
 
-from JukePi.io.playlist import Playlist
+from jukepi import Playlist
 
 logger = logging.getLogger(__name__)
 

@@ -5,9 +5,8 @@ from flask import Flask
 
 app = Flask(__name__)
 
-from JukePi.dao import DB
-from JukePi.dao import db
-from JukePi.dao.dao import persist_library
+from jukepi.dao import db, DB
+from jukepi.dao.dao import persist_library
 
 database = DB()
 database.create_all()

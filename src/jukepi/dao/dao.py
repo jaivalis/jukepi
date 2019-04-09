@@ -6,11 +6,11 @@ from pprint import pformat
 from hsaudiotag import auto
 from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
-from JukePi.configuration import CONFIG
+from jukepi.configuration import CONFIG
 
-from ..dao import Album, Artist, CoverArt, Track
+from jukepi.dao.models import Album, Artist, CoverArt, Track
 from ..exceptions import EntityNotFoundException
-from ..io.libraryhandler import filtered_crawler, get_artwork
+from ..iox.libraryhandler import filtered_crawler, get_artwork
 
 logger = logging.getLogger(__name__)
 # # <editor-fold desc="init">

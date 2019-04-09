@@ -1,8 +1,8 @@
 import vlc
 import logging
 
-from JukePi.io.playlist import Playlist
-from JukePi.io.playback.mediaplayer import MediaPlayer
+from jukepi import Playlist
+from jukepi import MediaPlayer
 
 
 logger = logging.getLogger(__name__)
