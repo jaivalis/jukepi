@@ -265,6 +265,8 @@ if __name__ == '__main__':
     
     p = LocalProxy(get_player)
 
+    print("Hello World!")
+
     # with app.app_context():
     #     dummy = dao.get_album_by_str(db.session, 'Devendra Banhart', 'Mala')
     #     playlist = Playlist(dummy.tracks)
