@@ -1,8 +1,8 @@
 import vlc
 import logging
 
-from jukepi import Playlist
-from jukepi import MediaPlayer
+import jukepi.iox.playlist as pl
+import jukepi.iox.playback.mediaplayer as mp
 
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ def song_finished(event):
     logger.debug('Song finished')
 
 
-class VlcMediaPlayer(MediaPlayer):
+class VlcMediaPlayer(mp.MediaPlayer):
     """
     Singleton
     https://www.olivieraubert.net/vlc/python-ctypes/doc/vlc.MediaListPlayer-class.html
@@ -48,7 +48,7 @@ class VlcMediaPlayer(MediaPlayer):
     def enqueue(self, tracks):
         pass
     
-    def play(self, playlist: Playlist = None):
+    def play(self, playlist: pl.Playlist = None):
         VlcMediaPlayer.instance.mlplayer.stop()
         VlcMediaPlayer.instance.current_index = 0
         
