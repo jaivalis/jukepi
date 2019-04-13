@@ -1,9 +1,9 @@
-import vlc
 import logging
 
-import jukepi.iox.playlist as pl
-import jukepi.iox.playback.mediaplayer as mp
+import vlc
 
+import jukepi.iox.playback.mediaplayer as mp
+import jukepi.iox.playlist as pl
 
 logger = logging.getLogger(__name__)
 

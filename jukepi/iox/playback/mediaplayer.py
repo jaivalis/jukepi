@@ -1,5 +1,4 @@
 import abc
-
 import logging
 
 import jukepi.iox.playlist as pl

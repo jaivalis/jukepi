@@ -5,7 +5,7 @@ import sys
 log_format = '%(asctime)s %(levelname)s %(name)s | %(message)s'
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_format)
 
-app = Flask(__name__, static_url_path='/Users/jaivalis/PycharmProjects/jukepi/jukepi/ui/static/')
+app = Flask(__name__)
 
 from jukepi.db import DB
 
