@@ -2,7 +2,7 @@ import abc
 
 import logging
 
-from JukePi.io.playlist import Playlist
+import jukepi.iox.playlist as pl
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class MediaPlayer(metaclass=abc.ABCMeta):
         pass
     
     @abc.abstractmethod
-    def play(self, playlist: Playlist = None):
+    def play(self, playlist: pl.Playlist = None):
         pass
     
     @abc.abstractmethod

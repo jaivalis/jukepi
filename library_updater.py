@@ -5,11 +5,10 @@ from flask import Flask
 
 app = Flask(__name__)
 
-from JukePi.dao import DB
-from JukePi.dao import db
-from JukePi.dao.dao import persist_library
+import jukepi.db as db
+import jukepi.db.dao as dao
 
-database = DB()
+database = db.DB()
 database.create_all()
 
-persist_library(db.session, rebuild=True)
+dao.persist_library(db.db_session, rebuild=True)

@@ -3,7 +3,7 @@ import os
 import pathlib
 from os.path import isfile, join
 
-from JukePi.configuration import CONFIG
+from jukepi.configuration import CONFIG
 
 
 logger = logging.getLogger(__name__)

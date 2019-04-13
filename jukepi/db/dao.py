@@ -3,14 +3,14 @@ import os
 from datetime import datetime
 from pprint import pformat
 
-from hsaudiotag import auto
+from jukepi.db.models import Album, Artist, CoverArt, Track
 from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
-from JukePi.configuration import CONFIG
 
-from ..dao import Album, Artist, CoverArt, Track
+import jukepi.iox.tagextractor as tags
+from jukepi.configuration import CONFIG
 from ..exceptions import EntityNotFoundException
-from ..io.libraryhandler import filtered_crawler, get_artwork
+from ..iox.libraryhandler import filtered_crawler, get_artwork
 
 logger = logging.getLogger(__name__)
 # # <editor-fold desc="init">
@@ -72,22 +72,22 @@ def persist_library(session_, rebuild: bool):
         if existing and existing.last_modified.timestamp() <= last_modified:
             continue
 
-        metadata = auto.File(uri)
+        metadata = tags.extract_metadata(uri)
 
-        existing_artist = get_artist(session_, metadata.artist)
+        existing_artist = get_artist(session_, metadata[tags.ARTIST_KEY])
         if not existing_artist:
-            existing_artist = Artist(name=metadata.artist)
+            existing_artist = Artist(name=metadata[tags.ARTIST_KEY])
             session_.add(existing_artist)
             session_.flush()
 
         existing_album = None
         for album in existing_artist.albums:
-            if album.title == metadata.album:
+            if album.title == metadata[tags.ALBUM_KEY]:
                 existing_album = album
                 break
         if not existing_album:
-            existing_album = Album(title=metadata.album,
-                                   year=metadata.year,
+            existing_album = Album(title=metadata[tags.ALBUM_KEY],
+                                   year=metadata[tags.YEAR_KEY],
                                    artist_id=existing_artist.id,
                                    artist=existing_artist)
             existing_artist.albums.append(existing_album)
@@ -102,14 +102,14 @@ def persist_library(session_, rebuild: bool):
         if existing:
             session_.query(Track).filter(Track.id == existing.id).delete()
 
-        track = Track(title=metadata.title,
-                      genre=metadata.genre,
+        track = Track(title=metadata[tags.TITLE_KEY],
+                      genre=metadata[tags.GENRE_KEY],
                       uri=uri,
-                      duration=metadata.duration,
-                      track_num=metadata.track,
+                      duration=metadata[tags.DURATION_KEY],
+                      track_num=metadata[tags.TRACK_NUM_KEY],
                       format=os.path.splitext(uri)[1],
-                      bit_rate=metadata.bitrate,
-                      year=metadata.year,
+                      bit_rate=metadata[tags.BITRATE_KEY],
+                      year=metadata[tags.YEAR_KEY],
                       
                       last_modified=datetime.fromtimestamp(last_modified),
 

@@ -8,14 +8,17 @@ from markupsafe import Markup
 from werkzeug.exceptions import abort
 from werkzeug.local import LocalProxy
 
-import JukePi.dao.dao as dao
-import JukePi.io.volumecontrol as vol
-from JukePi import app
-from JukePi.configuration import CONFIG
-from JukePi.dao import db
-from JukePi.exceptions import EntityNotFoundException
-from JukePi.io.playback.vlcmediaplayer import VlcMediaPlayer
-from JukePi.io.playlist import Playlist
+import jukepi.db.dao as dao
+import jukepi.iox.volumecontrol as vol
+import jukepi.db as db
+from jukepi import app
+from jukepi.configuration import CONFIG
+from jukepi.exceptions import EntityNotFoundException
+import jukepi.iox.playback.vlcmediaplayer as vlc
+from jukepi.iox.playlist import Playlist
+
+
+CWD = os.getcwd()
 
 
 def render_include_context(template_name_or_list, **context):
@@ -24,8 +27,9 @@ def render_include_context(template_name_or_list, **context):
     :param context: vararg
     :return: rendered template
     """
-    now_playing = dao.get_track_by_id(db.session, get_now_playing_id())
+    now_playing = dao.get_track_by_id(db.db_session, get_now_playing_id())
     # play_queue =
+    # template_resolved_path=os.path.join(CWD, 'jukepi', 'ui', 'static', 'templates', template_name_or_list)
     return render_template(template_name_or_list,
                            now_playing=now_playing,
                            volume=vol.get_volume(),
@@ -35,8 +39,8 @@ def render_include_context(template_name_or_list, **context):
 @app.route('/')
 @app.route('/index')
 def index():
-    added = dao.get_recently_added_albums(db.session, 5)
-    played = dao.get_recently_played_albums(db.session, 5)
+    added = dao.get_recently_added_albums(db.db_session, 5)
+    played = dao.get_recently_played_albums(db.db_session, 5)
     
     return render_include_context('index.html', recently_added_albums=added, recently_played_albums=played)
 
@@ -46,9 +50,9 @@ def search():
     query = request.args.get('q', type=str)
     query = urllib.parse.unquote_plus(query)
     
-    artists = dao.search_artists(db.session, query)
-    albums = dao.search_albums(db.session, query)
-    tracks = dao.search_tracks(db.session, query)
+    artists = dao.search_artists(db.db_session, query)
+    albums = dao.search_albums(db.db_session, query)
+    tracks = dao.search_tracks(db.db_session, query)
     
     title = 'Search Results' + query
     return render_include_context('search_results.html', title=title, artists=artists, albums=albums, tracks=tracks)
@@ -58,7 +62,7 @@ def search():
 def artist(name: str):
     name = urllib.parse.unquote_plus(name)
 
-    albums = dao.get_artist_discography(db.session, name)
+    albums = dao.get_artist_discography(db.db_session, name)
     if not albums:
         abort(404, {'message': 'Oops, artist not found!'})
         
@@ -71,7 +75,7 @@ def album(name: str, title: str):
     title = urllib.parse.unquote_plus(title)
     
     try:
-        album_ = dao.get_album_by_str(db.session, name, title)
+        album_ = dao.get_album_by_str(db.db_session, name, title)
         
         title = title
         return render_include_context('album.html', title=title, album=album_)
@@ -83,7 +87,7 @@ def album(name: str, title: str):
 def get_player():  # todo remove this, use only singleton
     player = getattr(g, '_player', None)
     if player is None:
-        player = g._player = VlcMediaPlayer()
+        player = g._player = vlc.VlcMediaPlayer()
     return player
 
 
@@ -97,7 +101,7 @@ def play_album(album_id: str):
     album_id = urllib.parse.unquote_plus(album_id)
     
     try:
-        album_ = dao.get_album_by_id(db.session, album_id)
+        album_ = dao.get_album_by_id(db.db_session, album_id)
         get_player().play(Playlist(album_.get_album_tracks()))
         
         return 'Now playing ' + str(album_), 200, {'Content-Type': 'text/plain'}
@@ -108,12 +112,12 @@ def play_album(album_id: str):
 @app.route('/playAlbumFromTrack/<album_id>/<track_id>')
 def play_album_from_track(album_id, track_id):
     album_id = urllib.parse.unquote_plus(album_id)
-    album_ = dao.get_album_by_id(db.session, album_id)
+    album_ = dao.get_album_by_id(db.db_session, album_id)
     if not album_:
         abort(404, {'message': 'Oops, album not found!'})
         
     track_id = urllib.parse.unquote_plus(track_id)
-    track_ = dao.get_track_by_id(db.session, track_id)
+    track_ = dao.get_track_by_id(db.db_session, track_id)
     if not track_ or track_ not in  album_.tracks:
         abort(404, {'message': 'Oops, track not found!'})
 
@@ -173,7 +177,7 @@ def artists_alpha():
     """ Artists overview sorted alphabetically.
     :return:
     """
-    artists = dao.get_artists_alpha(db.session)
+    artists = dao.get_artists_alpha(db.db_session)
     if not artists:
         abort(404, {'message': 'Oops, no artists found!'})
 
@@ -185,7 +189,7 @@ def artists_by_added():
     """ Artists overview sorted by plays.
     :return:
     """
-    artists = dao.get_artists_recent_added(db.session)
+    artists = dao.get_artists_recent_added(db.db_session)
     if not artists:
         abort(404, {'message': 'Oops, no artists found!'})
     
@@ -197,7 +201,7 @@ def artists_by_plays():
     """ Artists overview sorted by plays.
     :return:
     """
-    artists = dao.get_artists_recent_played(db.session)
+    artists = dao.get_artists_recent_played(db.db_session)
     if not artists:
         abort(404, {'message': 'Oops, no artists found!'})
     
@@ -211,7 +215,7 @@ def albums_by_alpha():
     """ Albums overview sorted alphabetically.
     :return:
     """
-    albums = dao.get_albums_alpha(db.session)
+    albums = dao.get_albums_alpha(db.db_session)
     if not albums:
         abort(404, {'message': 'Oops, no artists found!'})
     
@@ -223,7 +227,7 @@ def albums_by_plays():
     """ Albums overview sorted by plays.
     :return:
     """
-    albums = dao.get_albums_recent_played(db.session)
+    albums = dao.get_albums_recent_played(db.db_session)
     if not albums:
         abort(404, {'message': 'Oops, no artists found!'})
     
@@ -235,7 +239,7 @@ def albums_plays():
     """ Albums overview sorted by plays.
     :return:
     """
-    albums = dao.get_albums_recent_played(db.session)
+    albums = dao.get_albums_recent_played(db.db_session)
     if not albums:
         abort(404, {'message': 'Oops, no artists found!'})
     
@@ -245,7 +249,7 @@ def albums_plays():
 
 @app.teardown_appcontext
 def shutdown_session(exception):
-    db.session.remove()
+    db.db_session.remove()
 
 
 @app.template_filter('urlencode')
@@ -258,17 +262,17 @@ def url_encode_filter(s):
     
 if __name__ == '__main__':
 
-    db.init_app(app)
+    # db.init_app(app)
     app.template_folder = join(os.getcwd(), 'templates')
     app._static_folder = join(os.getcwd(), 'static')
     Bootstrap(app)
     
     p = LocalProxy(get_player)
 
-    print("Hello World!")
+    print('Hello World!')
 
     # with app.app_context():
-    #     dummy = dao.get_album_by_str(db.session, 'Devendra Banhart', 'Mala')
+    #     dummy = db.get_album_by_str(db.db_session, 'Devendra Banhart', 'Mala')
     #     playlist = Playlist(dummy.tracks)
     #     if not getattr(g, 'player', None):
     #         g.player = VlcMediaPlayer(playlist)

@@ -1,4 +1,9 @@
+osascript
 flask
-hsaudiotag
-sqlalchemy
+flask_bootstrap
+Flask-SQLAlchemy
 markupsafe
+mutagen
+sqlalchemy
+python-vlc
+werkzeug
