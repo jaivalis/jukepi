@@ -28,7 +28,7 @@ def set_volume(val: int):
         subprocess.call(["amixer", "-D", "pulse", "sset", "Master", str(val) + '%'])
     elif platform.system() == 'Darwin':
         # osascript.osascript("set volume output volume " + str(val))
-        call(["osascript -e 'set volume " + str(val) + "'"], shell=True)
+        call(["osascript -e 'set volume " + str(val / 10) + "'"], shell=True)
 
 
 def modify_volume(delta: int):

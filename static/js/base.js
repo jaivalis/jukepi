@@ -87,7 +87,7 @@ function initPlayButtons() {
             // from submitting our form (if we have one)
             e.preventDefault();
 
-            var clickedButton = e.target;
+            var clickedButton = e.currentTarget;
             var path = clickedButton.value;
 
             // Now we need to send the data to our server
