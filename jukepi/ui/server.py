@@ -1,3 +1,4 @@
+import logging
 import os
 import urllib.parse
 from os.path import join
@@ -8,17 +9,16 @@ from markupsafe import Markup
 from werkzeug.exceptions import abort
 from werkzeug.local import LocalProxy
 
-import jukepi.db.dao as dao
-import jukepi.iox.volumecontrol as vol
 import jukepi.db as db
+import jukepi.db.dao as dao
+import jukepi.iox.playback.vlcmediaplayer as vlc
+import jukepi.iox.volumecontrol as vol
 from jukepi import app
 from jukepi.configuration import CONFIG
 from jukepi.exceptions import EntityNotFoundException
-import jukepi.iox.playback.vlcmediaplayer as vlc
 from jukepi.iox.playlist import Playlist
 
-
-CWD = os.getcwd()
+logger = logging.getLogger(__name__)
 
 
 def render_include_context(template_name_or_list, **context):
@@ -29,7 +29,6 @@ def render_include_context(template_name_or_list, **context):
     """
     now_playing = dao.get_track_by_id(db.db_session, get_now_playing_id())
     # play_queue =
-    # template_resolved_path=os.path.join(CWD, 'jukepi', 'ui', 'static', 'templates', template_name_or_list)
     return render_template(template_name_or_list,
                            now_playing=now_playing,
                            volume=vol.get_volume(),
@@ -121,8 +120,9 @@ def play_album_from_track(album_id, track_id):
     if not track_ or track_ not in  album_.tracks:
         abort(404, {'message': 'Oops, track not found!'})
 
-    tracks = album_.get_album_tracks()
-    get_player().play(Playlist(tracks[tracks.index(track_):]))
+    album_tracks = album_.get_album_tracks()
+    tracks = album_tracks[album_tracks.index(track_):]
+    get_player().play(Playlist(tracks))
     
     return 'Now playing', 200, {'Content-Type': 'text/plain'}
 
