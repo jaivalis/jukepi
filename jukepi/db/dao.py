@@ -3,12 +3,12 @@ import os
 from datetime import datetime
 from pprint import pformat
 
-from jukepi.db.models import Album, Artist, CoverArt, Track
 from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
 
 import jukepi.iox.tagextractor as tags
 from jukepi.configuration import CONFIG
+from jukepi.db.models import Album, Artist, CoverArt, Track
 from ..exceptions import EntityNotFoundException
 from ..iox.libraryhandler import filtered_crawler, get_artwork
 

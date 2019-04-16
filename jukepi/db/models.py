@@ -11,7 +11,7 @@ class Artist(db.Model):
     added_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
     played_at = db.Column(db.DateTime)
     
-    plays = db.Column(db.Integer)  # TODO turn to float ?
+    plays = db.Column(db.Integer)
     
     albums = db.relationship('Album', lazy='subquery', back_populates='artist')
     
