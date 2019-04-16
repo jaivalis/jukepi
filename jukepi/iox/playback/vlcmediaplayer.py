@@ -1,7 +1,6 @@
 import logging
 
 import vlc
-from sqlalchemy import inspect
 
 import jukepi.iox.playback.mediaplayer as mp
 import jukepi.iox.playlist as pl
@@ -57,12 +56,6 @@ class VlcMediaPlayer(mp.MediaPlayer):
         VlcMediaPlayer.instance.current_index = 0
         
         VlcMediaPlayer.instance.playlist = playlist
-
-        for track in VlcMediaPlayer.instance.playlist.tracks:
-            logger.info('VlcMediaPlayer.instance.playlist.tracks detached? %s', inspect(track).detached)
-
-        for track in playlist.tracks:
-            logger.info('playlist.tracks detached? %s', inspect(track).detached)
 
         uris = VlcMediaPlayer.instance.playlist.get_song_uris()
         
