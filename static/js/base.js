@@ -3,10 +3,33 @@ window.onload = function() {
     initPlayButtons();
     initPlayerControl();
     initVolumeControl();
+    initQueueButton();
 };
 
 $(function () {
   $('[data-toggle="popover"]').popover()
+  $('.queue').popover({
+    html : true,
+    content: function() {
+//      return $('#popover_content_wrapper').html();
+
+        // Now we need to send the data to our server
+        // without reloading the page - this is the domain of
+        // AJAX (Asynchronous JavaScript And XML)
+        // We will create a new request object
+        // and set up a handler for the response
+        var request = new XMLHttpRequest();
+        request.onload = function() {
+            // We could do more interesting things with the response
+            // or, we could ignore it entirely
+            return request.responseText;
+        };
+        // We point the request at the appropriate path
+        request.open("GET", "/queue", true);
+        // and then we send it off
+        request.send();
+    }
+  });
 })
 
 $('.popover-dismiss').popover({
@@ -103,6 +126,45 @@ function initPlayButtons() {
             };
             // We point the request at the appropriate path
             request.open("GET", "/" + path, true);
+            // and then we send it off
+            request.send();
+        });
+    }
+}
+
+function initQueueButton() {
+    var queueButton = document.querySelectorAll(".btn-queue");
+    for (var i=0, l=queueButton.length; i<l; i++) {
+        var button = queueButton[i];
+
+        // For each button, listen for the "click" event
+        button.addEventListener("click", function(e) {
+            // When a click happens, stop the button
+            // from submitting our form (if we have one)
+            e.preventDefault();
+
+            var clickedButton = e.currentTarget;
+            var path = clickedButton.value;
+
+            // Now we need to send the data to our server
+            // without reloading the page - this is the domain of
+            // AJAX (Asynchronous JavaScript And XML)
+            // We will create a new request object
+            // and set up a handler for the response
+            var request = new XMLHttpRequest();
+            request.onload = function() {
+                // We could do more interesting things with the response
+                // or, we could ignore it entirely
+                $("[data-toggle=popover]").popover({
+                    html : true,
+                    placement: 'top',
+                    container: 'body',
+                    trigger: 'focus',
+                }).popover('show');
+                $("[data-toggle=popover]").attr('data-content', '<div>' + request.responseText + '</div>');
+            };
+            // We point the request at the appropriate path
+            request.open("GET", "/queue", true);
             // and then we send it off
             request.send();
         });

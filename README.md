@@ -22,11 +22,9 @@ python server.py
 
 ## TODO
 * Dockerize
-* Implement queue:
-    * server-side
-    * ui
 * lastfm, musicbrainz integration:
     * scrobbling
     * text
     * cover images
-    
+* Add support for [flask-themes](https://flask-themes2.readthedocs.io/en/latest/)
+* Break into frontend and backend
