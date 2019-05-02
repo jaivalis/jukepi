@@ -3,4 +3,5 @@
 library_dir: /Users/jaivalis/Music/iTunes
 
 [Other]
-host_url: 127.0.0.1
+host_endpoint: 0.0.0.0
+player_endpoint: http://0.0.0.0:8888

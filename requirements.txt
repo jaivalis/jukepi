@@ -1,3 +1,4 @@
+requests
 osascript
 flask
 flask_bootstrap
@@ -7,3 +8,4 @@ mutagen
 sqlalchemy
 python-vlc
 werkzeug
+

@@ -17,3 +17,5 @@ CONFIG.read(DEFAULT_CONFIG)
 
 if not CONFIG['Paths'] or not CONFIG['Paths']['library_dir']:
     raise ConfigurationException('Config file is missing entries')
+
+rest_player_host = CONFIG['Other']['player_endpoint']

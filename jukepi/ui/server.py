@@ -2,23 +2,18 @@ import os
 import urllib.parse
 from os.path import join
 
-from flask import g, render_template, request
+import requests
+from flask import render_template, request
 from flask_bootstrap import Bootstrap
 from markupsafe import Markup
 from werkzeug.exceptions import abort
-from werkzeug.local import LocalProxy
 
+import jukepi.configuration as config
+import jukepi.db as db
 import jukepi.db.dao as dao
 import jukepi.iox.volumecontrol as vol
-import jukepi.db as db
 from jukepi import app
-from jukepi.configuration import CONFIG
 from jukepi.exceptions import EntityNotFoundException
-import jukepi.iox.playback.vlcmediaplayer as vlc
-from jukepi.iox.playlist import Playlist
-
-
-CWD = os.getcwd()
 
 
 def render_include_context(template_name_or_list, **context):
@@ -83,14 +78,6 @@ def album(name: str, title: str):
         abort(404, {'message': 'Oops, album not found!'})
 
 
-# <editor-fold desc="Playback">
-def get_player():  # todo remove this, use only singleton
-    player = getattr(g, '_player', None)
-    if player is None:
-        player = g._player = vlc.VlcMediaPlayer()
-    return player
-
-
 @app.route('/play/<track_id>')
 def play_track(track_id: str):
     track_id = urllib.parse.unquote_plus(track_id)
@@ -102,9 +89,11 @@ def play_album(album_id: str):
     
     try:
         album_ = dao.get_album_by_id(db.db_session, album_id)
-        get_player().play(Playlist(album_.get_album_tracks()))
+        # get_player().play(Playlist(album_.get_album_tracks()))
+        r = requests.post(config.rest_player_host + '/play', album_.get_album_tracks())
+        return r.text, r.status_code
         
-        return 'Now playing ' + str(album_), 200, {'Content-Type': 'text/plain'}
+        # return 'Now playing ' + str(album_), 200, {'Content-Type': 'text/plain'}
     except EntityNotFoundException:
         abort(404, {'message': 'Oops, album not found!'})
     
@@ -122,34 +111,42 @@ def play_album_from_track(album_id, track_id):
         abort(404, {'message': 'Oops, track not found!'})
 
     tracks = album_.get_album_tracks()
-    get_player().play(Playlist(tracks[tracks.index(track_):]))
-    
-    return 'Now playing', 200, {'Content-Type': 'text/plain'}
+    # get_player().play(Playlist(tracks[tracks.index(track_):]))
+    r = requests.post(config.rest_player_host + '/play', tracks[tracks.index(track_):])
+    return r.text, r.status_code
 
 
 @app.route('/pause')
 def pause():
-    get_player().pause()
-    return '', 200, {'Content-Type': 'text/plain'}
+    # get_player().pause()
+    r = requests.get(config.rest_player_host + '/pause')
+    return r.text, r.status_code
+    # return '', 200, {'Content-Type': 'text/plain'}
 
 
 @app.route('/next')
 def next():
-    get_player().next()
-    return '', 200, {'Content-Type': 'text/plain'}
+    # get_player().next()
+    r = requests.get(config.rest_player_host + '/fwd')
+    return r.text, r.status_code
+    # return '', 200, {'Content-Type': 'text/plain'}
 
 
 @app.route('/prev')
 def prev():
-    get_player().prev()
-    return '', 200, {'Content-Type': 'text/plain'}
+    # get_player().prev()
+    r = requests.get(config.rest_player_host + '/bwd')
+    return r.text, r.status_code
+    # return '', 200, {'Content-Type': 'text/plain'}
 
 
 @app.route('/setVolume')
 def set_volume():
     volume = request.args.get('v', type=int)
-    vol.set_volume(volume)
-    return '', 200, {'Content-Type': 'text/plain'}
+    # vol.set_volume(volume)
+    # return '', 200, {'Content-Type': 'text/plain'}
+    r = requests.post(config.rest_player_host + '/setVolume')
+    return r.text, r.status_code
 
 
 @app.route('/getVolume')
@@ -158,15 +155,26 @@ def get_volume():
 
 
 def get_now_playing_id():
-    return get_player().get_now_playing_id()
+    r = requests.get(config.rest_player_host + '/queue')
+    queue_list = r.json()['tracks']
+
+    if not queue_list:
+        return None
+
+    enriched_track = queue_list[0]  # todo
+    return enriched_track
 
 
 @app.route('/queue')
 def get_play_queue():
-    queue_list = get_player().get_queue()
+    # queue_list = get_player().get_queue()
+    r = requests.get(config.rest_player_host + '/queue')
+    queue_list = r.json()['tracks']
+
     if not queue_list:
         return 'Nothing playing right now.', 200, {'Content-Type': 'text/plain'}
-    return render_template('playlist.html', playlist=queue_list.tracks)
+    enriched_tracks = queue_list  # todo
+    return render_template('playlist.html', playlist=enriched_tracks)
     
 # </editor-fold>
 
@@ -267,7 +275,7 @@ if __name__ == '__main__':
     app._static_folder = join(os.getcwd(), 'static')
     Bootstrap(app)
     
-    p = LocalProxy(get_player)
+    # p = LocalProxy(get_player)
 
     print('Hello World!')
 
@@ -279,4 +287,5 @@ if __name__ == '__main__':
     #     # g.player.play()
     #     g.player.next()
 
-    app.run(host=CONFIG['Other']['host_url'], port=8080, debug=True)
+    app.run(host=config.CONFIG['Other']['host_endpoint'], port=8080, debug=True)
+

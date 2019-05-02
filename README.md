@@ -17,11 +17,13 @@ python library_updater.py
 ~~~
 Next you can spin up the server by running 
 ~~~
-python server.py
+python -m jukepi.ui.server
 ~~~
 
+## Run Dockerized
+todo
+
 ## TODO
-* Dockerize
 * Implement queue:
     * server-side
     * ui

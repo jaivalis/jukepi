@@ -1,0 +1,24 @@
+version: "0"
+
+services:
+
+#  rest:
+#    image: nimmis/apache-php7
+#    ports:
+#      - "80:8080"
+#    networks:
+#      - jukepi-network
+
+  jukepi-rest-player:
+    image: jukepi-rest-player
+    networks:
+      - jukepi-network
+
+  jukepi:
+    image: jukepi
+    networks:
+      - jukepi-network
+
+networks:
+  jukepi-network:
+    driver: overlay
