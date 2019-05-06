@@ -4,4 +4,4 @@ library_dir: /Users/jaivalis/Music/iTunes
 
 [Other]
 host_endpoint: 0.0.0.0
-player_endpoint: http://0.0.0.0:8888
+player_endpoint: http://jukepi-rest-player:8888
