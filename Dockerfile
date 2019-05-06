@@ -4,8 +4,8 @@ ADD jukepi/ /jukepi
 ADD library_updater.py /
 ADD requirements.txt /
 ADD resources /resources
-ADD templates /templates
-ADD static /static
+ADD jukepi/ui/templates /templates
+ADD jukepi/ui/static /static
 
 # Update & Install dependencies
 RUN apk add --no-cache --update \

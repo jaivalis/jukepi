@@ -271,8 +271,8 @@ def url_encode_filter(s):
 if __name__ == '__main__':
 
     # db.init_app(app)
-    app.template_folder = join(os.getcwd(), 'templates')
-    app._static_folder = join(os.getcwd(), 'static')
+    app.template_folder = join(os.getcwd(), 'jukepi', 'ui', 'templates')
+    app._static_folder = join(os.getcwd(), 'jukepi', 'ui', 'static')
     Bootstrap(app)
     
     # p = LocalProxy(get_player)

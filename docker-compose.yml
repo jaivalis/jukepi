@@ -1,24 +1,25 @@
-version: "0"
+version: "3"
+
 
 services:
-
-#  rest:
-#    image: nimmis/apache-php7
-#    ports:
-#      - "80:8080"
-#    networks:
-#      - jukepi-network
-
   jukepi-rest-player:
+    build: ./rest-player/build.sh
     image: jukepi-rest-player
-    networks:
-      - jukepi-network
+    network_mode: "jukepi-network"
+#    volumes:
+#      - /Users/jaivalis/Music/iTunes:/music
 
   jukepi:
+    build: ./build.sh
     image: jukepi
-    networks:
-      - jukepi-network
+    network_mode: "jukepi-network"
+#      volumes:
+#        - /Users/jaivalis/Music/iTunes:/music
 
 networks:
   jukepi-network:
     driver: overlay
+
+volumes:
+  data:
+    external: true
