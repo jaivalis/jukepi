@@ -1,11 +1,9 @@
 FROM alpine:3.8
 
-ADD jukepi/ /jukepi
+ADD jukepi /jukepi
 ADD library_updater.py /
 ADD requirements.txt /
-ADD resources /resources
-ADD jukepi/ui/templates /templates
-ADD jukepi/ui/static /static
+ADD jukepi/resources /resources
 
 # Update & Install dependencies
 RUN apk add --no-cache --update \

@@ -2,7 +2,6 @@ import logging
 import os
 import sys
 import urllib.parse
-from os.path import join
 
 from flask import Flask, request
 from flask import jsonify
@@ -102,9 +101,6 @@ if __name__ == '__main__':
     logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_format)
 
     # db.init_app(player)
-    app.template_folder = join(os.getcwd(), 'templates')
-    app._static_folder = join(os.getcwd(), 'static')
-
     # p = LocalProxy(get_player)
 
     app.run(host='0.0.0.0', port=8888, debug=True)

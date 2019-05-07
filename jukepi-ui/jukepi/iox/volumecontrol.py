@@ -22,7 +22,8 @@ def get_volume() -> int:
         return 0
     elif platform.system() == 'Darwin':
         output = str(subprocess.check_output(['osascript', '-e', '"get volume settings"']))
-        return int(output[16:output.index(',')])
+        # return int(output[16:output.index(',')])
+        return 0
 
 
 def set_volume(val: int):

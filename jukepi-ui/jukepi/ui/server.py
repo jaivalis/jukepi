@@ -271,21 +271,15 @@ def url_encode_filter(s):
 if __name__ == '__main__':
 
     # db.init_app(app)
-    app.template_folder = join(os.getcwd(), 'jukepi', 'ui', 'templates')
-    app._static_folder = join(os.getcwd(), 'jukepi', 'ui', 'static')
+    i = os.path.realpath(__file__).rfind(os.sep)
+    file_dir = os.path.realpath(__file__)[:i]
+    app.template_folder = join(file_dir, 'templates')
+    app._static_folder = join(file_dir, 'static')
     Bootstrap(app)
     
     # p = LocalProxy(get_player)
 
     print('Hello World!')
-
-    # with app.app_context():
-    #     dummy = db.get_album_by_str(db.db_session, 'Devendra Banhart', 'Mala')
-    #     playlist = Playlist(dummy.tracks)
-    #     if not getattr(g, 'player', None):
-    #         g.player = VlcMediaPlayer(playlist)
-    #     # g.player.play()
-    #     g.player.next()
 
     app.run(host=config.CONFIG['Other']['host_endpoint'], port=8080, debug=True)
 

@@ -15,7 +15,7 @@ services:
       - /Users/jaivalis/Music/iTunes:/music
 
   jukepi:
-    build: ./build.sh
+    build: ./jukepi-ui/build.sh
     container_name: jukepi
     image: jukepi
     ports:
@@ -26,6 +26,6 @@ services:
     volumes:
       - /Users/jaivalis/Music/iTunes:/music
 
-networks:
-  jukepi-network:
-    driver: overlay
+#networks:
+#  jukepi-network:
+#    driver: overlay
