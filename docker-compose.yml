@@ -5,21 +5,27 @@ services:
   jukepi-rest-player:
     build: ./rest-player/build.sh
     image: jukepi-rest-player
-    network_mode: "jukepi-network"
-#    volumes:
-#      - /Users/jaivalis/Music/iTunes:/music
+    container_name: jukepi-rest-player
+    network_mode: jukepi-network
+    ports:
+      - 8888:8888
+    environment:
+      - PLAYER=mock
+    volumes:
+      - /Users/jaivalis/Music/iTunes:/music
 
   jukepi:
     build: ./build.sh
+    container_name: jukepi
     image: jukepi
-    network_mode: "jukepi-network"
-#      volumes:
-#        - /Users/jaivalis/Music/iTunes:/music
+    ports:
+      - 8080:8080
+    network_mode: jukepi-network
+    environment:
+      - PLAYER_ENDPOINT=http://jukepi-rest-player:8888
+    volumes:
+      - /Users/jaivalis/Music/iTunes:/music
 
 networks:
   jukepi-network:
     driver: overlay
-
-volumes:
-  data:
-    external: true
