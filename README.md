@@ -21,9 +21,14 @@ python -m jukepi.ui.server
 ~~~
 
 ## Run Dockerized
-todo
+Build & Run the images:
+~~~
+docker-compose build
+docker-compose up -d
+~~~
 
 ## TODO
+* Separate and dockerize db manager
 * Implement queue:
     * server-side
     * ui

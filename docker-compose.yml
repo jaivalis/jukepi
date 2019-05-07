@@ -3,7 +3,7 @@ version: "3"
 
 services:
   jukepi-rest-player:
-    build: ./rest-player/build.sh
+    build: ./rest-player/
     image: jukepi-rest-player
     container_name: jukepi-rest-player
     network_mode: jukepi-network
@@ -15,12 +15,12 @@ services:
       - /Users/jaivalis/Music/iTunes:/music
 
   jukepi:
-    build: ./jukepi-ui/build.sh
-    container_name: jukepi
+    build: ./jukepi-ui/
     image: jukepi
+    container_name: jukepi
+    network_mode: jukepi-network
     ports:
       - 8080:8080
-    network_mode: jukepi-network
     environment:
       - PLAYER_ENDPOINT=http://jukepi-rest-player:8888
     volumes:
